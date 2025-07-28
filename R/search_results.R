@@ -119,7 +119,7 @@ SearchResults <- R6::R6Class("SearchResults",
       status <- 0
       while (status != 200 && status != 429 && status != 500) {
         Sys.sleep(3)
-        if(verbose) message("Waiting 3 s ... status=", status)
+        if(verbose) message("\nWaiting 3 s ... status=", status)
         status <- private$check_status(download_id, verbose)
       }
       status == 200
