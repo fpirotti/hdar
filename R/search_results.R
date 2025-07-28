@@ -50,7 +50,7 @@ SearchResults <- R6::R6Class("SearchResults",
     #' @return Nothing returned but downloaded files are saved at the specified location.
     #' @importFrom progress progress_bar
     #' @export
-    download = function(output_dir, selected_indexes, stop_at_failure = TRUE, force = FALSE, prompt = TRUE) {
+    download = function(output_dir, selected_indexes, stop_at_failure = TRUE, force = FALSE, prompt = TRUE, verbose=FALSE) {
       if (self$total_count == 0 || (prompt && !private$prompt_user_confirmation(self$total_size))) {
         return(NULL)
       }
@@ -75,7 +75,7 @@ SearchResults <- R6::R6Class("SearchResults",
         tryCatch(
           {
             download_id <- private$get_download_id(r)
-            is_ready <- private$ensure_download_is_ready(download_id)
+            is_ready <- private$ensure_download_is_ready(download_id, verbose)
             if (is_ready) {
               private$download_resource(download_id, output_dir, force)
             }
@@ -107,19 +107,21 @@ SearchResults <- R6::R6Class("SearchResults",
     LARGE_DOWNLOAD_SIZE = 100 * 1024 * 1024, # 100MB
     client = NULL,
     dataset_id = NULL,
-    check_status = function(download_id) {
+    check_status = function(download_id, verbose) {
       url <- paste(private$client$apiUrl, "dataaccess/download", download_id, sep = "/")
       req <- request(url) %>%
         req_method("HEAD")
 
       resp <- private$client$send_request(req)
+      if(verbose) message("Waiting 3 s ", status)
       resp$status_code
     },
-    ensure_download_is_ready = function(download_id) {
+    ensure_download_is_ready = function(download_id, verbose) {
       status <- 0
       while (status != 200 && status != 429 && status != 500) {
         Sys.sleep(3)
-        status <- private$check_status(download_id)
+        if(verbose) message("Waiting 3 s ", status)
+        status <- private$check_status(download_id, verbose)
       }
       status == 200
     },
