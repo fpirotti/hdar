@@ -102,8 +102,8 @@ SearchResults <- R6::R6Class("SearchResults",
         )
       }
     }
-  ),
-  private = list(
+#  ),
+#  private = list(
     LARGE_DOWNLOAD_SIZE = 100 * 1024 * 1024, # 100MB
     client = NULL,
     dataset_id = NULL,
