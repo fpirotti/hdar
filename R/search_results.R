@@ -112,8 +112,7 @@ SearchResults <- R6::R6Class("SearchResults",
       req <- request(url) %>%
         req_method("HEAD")
 
-      resp <- private$client$send_request(req)
-      if(verbose) message("Waiting 3 s ", status)
+      resp <- private$client$send_request(req) 
       resp$status_code
     },
     ensure_download_is_ready = function(download_id, verbose) {
